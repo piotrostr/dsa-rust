@@ -12,15 +12,7 @@ pub fn length_of_longest_substring(s: String) -> i32 {
                     max_length = longest_substring.len();
                 }
             }
-            false => longest_substring.replace_range(
-                ..,
-                (*longest_substring)
-                    .to_string()
-                    .pop()
-                    .unwrap()
-                    .to_string()
-                    .as_str(),
-            ),
+            false => longest_substring = longest_substring[1..].to_string(),
         }
     }
     return max_length as i32;
