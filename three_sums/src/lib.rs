@@ -8,11 +8,9 @@
 /// * Input: nums = `[-1,0,1,2,-1,-4]`
 /// * Output: `[[-1,-1,2],[-1,0,1]]`
 /// * Explanation:
-/// ```
-///     nums[0] + nums[1] + nums[2] = (-1) + 0 + 1 = 0
-///     nums[1] + nums[2] + nums[4] = 0 + 1 + (-1) = 0
-///     nums[0] + nums[3] + nums[4] = (-1) + 2 + (-1) = 0
-/// ```
+///   * nums[0] + nums[1] + nums[2] = (-1) + 0 + 1 = 0
+///   * nums[1] + nums[2] + nums[4] = 0 + 1 + (-1) = 0
+///   * nums[0] + nums[3] + nums[4] = (-1) + 2 + (-1) = 0
 /// The distinct triplets are `[-1,0,1]` and `[-1,-1,2]`.
 /// Notice that the order of the output and the order of the triplets does not
 /// matter.
@@ -33,7 +31,7 @@
 /// iterate through all of the nums with three pointers would be O(n^3),
 /// checking the condition for every possible combination, even repeating the
 /// indices:
-/// ```
+///
 /// for i..nums.len() {
 ///   for j..nums.len() {
 ///     for k..nums.len() {
@@ -41,7 +39,7 @@
 ///     }
 ///   }
 /// }
-/// ```
+///
 /// pretty bad
 ///
 /// getting all of the combinations of unique indices and going through those -
@@ -69,24 +67,46 @@
 /// search for -2 in the array,
 ///
 /// if doesn't exist continue by sliding both indices
-/// if it exists, check if it satisfying the condition()
+/// if it exists, check if it satisfying the condition
 ///
-/// slide the indices through the whole array, until reaching the other band
-/// I think that there is no need for a double loop since there is the binary
-/// search for the triplet, might be coded later
+/// slide the indices through the whole array, until reaching equality or
+/// pointers crossing
+///
+/// I think that there is no need for a double loop since
+/// there is the binary search for the triplet, might be coded later
 pub struct Solution {}
 
 impl Solution {
     pub fn three_sums(nums: Vec<i32>) -> Vec<Vec<i32>> {
-        return Vec::from(Vec::new());
-    }
-
-    pub fn condition(nums: Vec<i32>, i: usize, j: usize, k: usize) -> bool {
-        if i != j && i != k && j != k && nums[i] + nums[j] + nums[k] == 0 {
-            return true;
+        let mut res = vec![];
+        let nums = &mut nums.clone();
+        nums.sort();
+        let mut i = 0 as usize;
+        let mut j = nums.len() - 1;
+        while i < nums.len() {
+            while j != 0 {
+                let k_that_would_fit = -(nums[i] + nums[j]);
+                match nums.binary_search(&k_that_would_fit) {
+                    Ok(k) => {
+                        if check_condition(nums, i, j, k) {
+                            res.push(vec![nums[i], nums[j], nums[k]])
+                        }
+                    }
+                    Err(_) => {}
+                };
+                j -= 1;
+            }
+            i += 1;
         }
-        return false;
+        return res;
     }
+}
+
+pub fn check_condition(nums: &Vec<i32>, i: usize, j: usize, k: usize) -> bool {
+    if i != j && i != k && j != k && nums[i] + nums[j] + nums[k] == 0 {
+        return true;
+    }
+    return false;
 }
 
 #[cfg(test)]
@@ -97,20 +117,20 @@ mod tests {
     fn example_1() {
         let got = Solution::three_sums([-1, 0, 1, 2, -1, -4].to_vec());
         let want = [[-1, -1, 2].to_vec(), [-1, 0, 1].to_vec()].to_vec();
-        assert_eq!(got.clone().sort(), want.clone().sort());
+        assert_eq!(got, want);
     }
 
     #[test]
     fn example_2() {
         let got = Solution::three_sums([0, 1, 1].to_vec());
         let want: Vec<Vec<i32>> = [].to_vec();
-        assert_eq!(got.clone().sort(), want.clone().sort());
+        assert_eq!(got, want);
     }
 
     #[test]
     fn example_3() {
         let got = Solution::three_sums([0, 0, 0].to_vec());
         let want = [[0, 0, 0].to_vec()].to_vec();
-        assert_eq!(got.clone().sort(), want.clone().sort());
+        assert_eq!(got, want);
     }
 }
