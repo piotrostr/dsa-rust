@@ -1,3 +1,5 @@
+use std::collections::{HashMap, HashSet};
+
 /// # Given an integer array nums
 /// ## Problem
 ///
@@ -74,32 +76,57 @@
 ///
 /// I think that there is no need for a double loop since
 /// there is the binary search for the triplet, might be coded later
+///
+/// Update: having been hinted that this is just `two_sum` with an additional
+/// number the problem becomes simple
+///
+/// Solution would be to simply iterate through the array having fixed on very
+/// number and then performing two sums!
+///
+/// Lets start with implementing the non-optimal algorithm with re-creating a
+/// new hash map on every run O(n^2) for both complexity and space
+///
+/// The twist is that the indices cannot be the same, so got to ensure that too later
 pub struct Solution {}
 
 impl Solution {
-    pub fn three_sums(nums: Vec<i32>) -> Vec<Vec<i32>> {
-        let mut res = vec![];
-        let nums = &mut nums.clone();
-        nums.sort();
-        let mut i = 0 as usize;
-        let mut j = nums.len() - 1;
-        while i < nums.len() {
-            while j != 0 {
-                let k_that_would_fit = -(nums[i] + nums[j]);
-                match nums.binary_search(&k_that_would_fit) {
-                    Ok(k) => {
-                        if check_condition(nums, i, j, k) {
-                            res.push(vec![nums[i], nums[j], nums[k]])
-                        }
-                    }
-                    Err(_) => {}
-                };
-                j -= 1;
+    pub fn three_sum(nums: Vec<i32>) -> Vec<Vec<i32>> {
+        let mut res: HashSet<Vec<i32>> = HashSet::new();
+        for (i, num) in nums.iter().enumerate() {
+            // so that two_sum + num = 0
+            // meaning that two_sum = -num
+            // the `num` and the two more nums have to be zero
+            // meaning, that the target is the opposite of the number
+            let target = -num;
+            if let [j, k] = &two_sum(nums.clone(), target)[..] {
+                let _j = *j as usize;
+                let _k = *k as usize;
+                if check_condition(&nums, i, _j, _k) {
+                    // push sorted, then hashset will automatically de-dup
+                    let mut subres = vec![nums[i], nums[_j], nums[_k]];
+                    subres.sort();
+                    res.insert(subres);
+                }
             }
-            i += 1;
         }
-        return res;
+        let mut resvec = Vec::from_iter(res.into_iter());
+        resvec.sort();
+        return resvec;
     }
+}
+
+pub fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {
+    let mut map: HashMap<i32, i32> = HashMap::new();
+    for (index, num) in nums.iter().enumerate() {
+        match map.get(&(target - *num)) {
+            Some(&complement_index) => {
+                return vec![index as i32, complement_index];
+            }
+            None => map.insert(*num, index as i32),
+        };
+    }
+
+    return vec![];
 }
 
 pub fn check_condition(nums: &Vec<i32>, i: usize, j: usize, k: usize) -> bool {
@@ -115,21 +142,21 @@ mod tests {
 
     #[test]
     fn example_1() {
-        let got = Solution::three_sums([-1, 0, 1, 2, -1, -4].to_vec());
+        let got = Solution::three_sum([-1, 0, 1, 2, -1, -4].to_vec());
         let want = [[-1, -1, 2].to_vec(), [-1, 0, 1].to_vec()].to_vec();
         assert_eq!(got, want);
     }
 
     #[test]
     fn example_2() {
-        let got = Solution::three_sums([0, 1, 1].to_vec());
+        let got = Solution::three_sum([0, 1, 1].to_vec());
         let want: Vec<Vec<i32>> = [].to_vec();
         assert_eq!(got, want);
     }
 
     #[test]
     fn example_3() {
-        let got = Solution::three_sums([0, 0, 0].to_vec());
+        let got = Solution::three_sum([0, 0, 0].to_vec());
         let want = [[0, 0, 0].to_vec()].to_vec();
         assert_eq!(got, want);
     }
