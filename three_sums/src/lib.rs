@@ -160,4 +160,24 @@ mod tests {
         let want = [[0, 0, 0].to_vec()].to_vec();
         assert_eq!(got, want);
     }
+
+    #[test]
+    fn example_4() {
+        let inp = [-1, 0, 1, 2, -1, -4, -2, -3, 3, 0, 4];
+        let got = Solution::three_sum(inp.to_vec());
+        let want = [
+            [-4, 0, 4],
+            [-4, 1, 3],
+            [-3, -1, 4],
+            [-3, 0, 3],
+            [-3, 1, 2],
+            [-2, -1, 3],
+            [-2, 0, 2],
+            [-1, -1, 2],
+            [-1, 0, 1],
+        ]
+        .map(|sub| sub.to_vec())
+        .to_vec();
+        assert_eq!(got, want);
+    }
 }
