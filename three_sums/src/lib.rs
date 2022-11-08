@@ -1,5 +1,3 @@
-use std::collections::{HashMap, HashSet};
-
 /// # Given an integer array nums
 /// ## Problem
 ///
@@ -89,8 +87,36 @@ use std::collections::{HashMap, HashSet};
 /// The twist is that the indices cannot be the same, so got to ensure that too later
 pub struct Solution {}
 
+use std::cmp::Ordering;
+use std::collections::{HashMap, HashSet};
+
 impl Solution {
     pub fn three_sum(nums: Vec<i32>) -> Vec<Vec<i32>> {
+        if nums.len() == 0 {
+            return vec![];
+        }
+        // handle the corner case with just zeros and larger numbers
+        {
+            let mut nums = nums.clone();
+            nums.sort();
+
+            let first_number = nums[0];
+            match first_number.cmp(&(0)) {
+                Ordering::Equal => {
+                    if let [first, second, third] = nums[..3] {
+                        if first == 0 && second == 0 && third == 0 {
+                            return vec![vec![0, 0, 0]];
+                        } else {
+                            return vec![];
+                        }
+                    }
+                }
+                Ordering::Greater => {
+                    return vec![];
+                }
+                Ordering::Less => {}
+            }
+        }
         let mut map: HashMap<i32, i32> = HashMap::new();
         for (index, num) in nums.iter().enumerate() {
             map.insert(*num, index as i32);
