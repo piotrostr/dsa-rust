@@ -91,6 +91,10 @@ pub struct Solution {}
 
 impl Solution {
     pub fn three_sum(nums: Vec<i32>) -> Vec<Vec<i32>> {
+        let mut map: HashMap<i32, i32> = HashMap::new();
+        for (index, num) in nums.iter().enumerate() {
+            map.insert(*num, index as i32);
+        }
         let mut res: HashSet<Vec<i32>> = HashSet::new();
         for (i, num) in nums.iter().enumerate() {
             // so that two_sum + num = 0
@@ -98,14 +102,16 @@ impl Solution {
             // the `num` and the two more nums have to be zero
             // meaning, that the target is the opposite of the number
             let target = -num;
-            if let [j, k] = &two_sum(nums.clone(), target)[..] {
-                let _j = *j as usize;
-                let _k = *k as usize;
-                if check_condition(&nums, i, _j, _k) {
-                    // push sorted, then hashset will automatically de-dup
-                    let mut subres = vec![nums[i], nums[_j], nums[_k]];
-                    subres.sort();
-                    res.insert(subres);
+            for possible_match in (&two_sum(&map, nums.clone(), target)).iter() {
+                if let [j, k] = possible_match[..] {
+                    let _j = j as usize;
+                    let _k = k as usize;
+                    if check_condition(&nums, i, _j, _k) {
+                        // push sorted, then hashset will automatically de-dup
+                        let mut subres = vec![nums[i], nums[_j], nums[_k]];
+                        subres.sort();
+                        res.insert(subres);
+                    }
                 }
             }
         }
@@ -115,18 +121,18 @@ impl Solution {
     }
 }
 
-pub fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {
-    let mut map: HashMap<i32, i32> = HashMap::new();
+pub fn two_sum(map: &HashMap<i32, i32>, nums: Vec<i32>, target: i32) -> Vec<Vec<i32>> {
+    let mut res: Vec<Vec<i32>> = vec![];
     for (index, num) in nums.iter().enumerate() {
         match map.get(&(target - *num)) {
             Some(&complement_index) => {
-                return vec![index as i32, complement_index];
+                res.push(vec![index as i32, complement_index]);
             }
-            None => map.insert(*num, index as i32),
+            None => {}
         };
     }
 
-    return vec![];
+    return res;
 }
 
 pub fn check_condition(nums: &Vec<i32>, i: usize, j: usize, k: usize) -> bool {
@@ -136,9 +142,25 @@ pub fn check_condition(nums: &Vec<i32>, i: usize, j: usize, k: usize) -> bool {
     return false;
 }
 
+pub fn deduplicate<T: std::cmp::Eq + std::hash::Hash>(nums: Vec<T>) -> Vec<T> {
+    // convert to hash set
+    let unique: HashSet<T> = HashSet::from_iter(nums.into_iter());
+    // convert the de-duped back into vector
+    return Vec::from_iter(unique);
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn deduplicate_works() {
+        let inp = vec![vec![1, 2, 3], vec![1, 2, 3]];
+        let want = vec![vec![1, 2, 3]];
+        let got = deduplicate(inp.clone());
+        println!("inp {:?} got {:?}", inp, got);
+        assert_eq!(got, want);
+    }
 
     #[test]
     fn example_1() {
