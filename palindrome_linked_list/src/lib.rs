@@ -29,8 +29,6 @@
 /// pose memory storage tradeoff
 pub struct Solution;
 
-use std::collections::HashMap;
-
 // Definition for singly-linked list.
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct ListNode {
@@ -47,44 +45,40 @@ impl ListNode {
 
 impl Solution {
     pub fn is_palindrome(head: Option<Box<ListNode>>) -> bool {
-        let mut map: HashMap<usize, i32> = HashMap::new();
-        let mut index = 0;
+        let mut vector = vec![];
         let mut head = head;
         loop {
             match head {
                 Some(node) => {
-                    map.insert(index, node.val);
-                    index += 1;
-                    // for memory safety clone the next node into head
-                    // this is not necessarily the efficient solution because
-                    // every node contains the whole linked list
-                    // not sure if under the hood it clones only the next
-                    // element with reference or the entire thing in memory
-                    // I think the prior but will see during profiling
-                    head = node.next.clone();
+                    vector.push(node.val);
+                    head = node.next;
                 }
                 None => break,
             }
         }
 
-        let (mut left, mut right): (usize, usize);
-        if map.keys().len() % 2 == 0 {
+        // even easier would be to just check for equality of a reversed array,
+        // this is the solution that was hash-map-based to start with
+        let (mut left, mut right): (i32, i32);
+        if vector.len() % 2 == 0 {
             // even
-            left = map.keys().len() / 2;
-            right = left + 1;
+            left = (vector.len() / 2 - 1) as i32;
+            right = (vector.len() / 2 + 1 - 1) as i32;
         } else {
             // odd
-            let midpoint = ((map.keys().len() as f32) / 2.).ceil() as usize;
-            left = midpoint - 1;
-            right = midpoint + 1;
+            let midpoint = ((vector.len() as f32) / 2.).ceil() as usize;
+            left = (midpoint - 1 - 1) as i32;
+            right = (midpoint + 1 - 1) as i32;
         }
+        // there is a (-1) everywhere as the index starts count from
+        // 0 and length from 1
 
         let (mut l, mut r): (i32, i32);
-        while left != 0 {
-            l = *map.get(&left).unwrap();
-            r = *map.get(&right).unwrap();
+        while left >= 0 {
+            l = vector[left as usize];
+            r = vector[right as usize];
             if l != r {
-                return true;
+                return false;
             }
             left -= 1;
             right += 1;
@@ -112,5 +106,21 @@ mod tests {
             })),
         }));
         assert_eq!(Solution::is_palindrome(inp_head), true);
+    }
+
+    #[test]
+    fn is_palindrome_example_2() {
+        // [1, 1, 2, 1]
+        let inp_head = Option::Some(Box::new(ListNode {
+            val: 1,
+            next: Option::Some(Box::new(ListNode {
+                val: 1,
+                next: Option::Some(Box::new(ListNode {
+                    val: 2,
+                    next: Option::Some(Box::new(ListNode { val: 1, next: None })),
+                })),
+            })),
+        }));
+        assert_eq!(Solution::is_palindrome(inp_head), false);
     }
 }
