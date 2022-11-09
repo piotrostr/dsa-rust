@@ -36,13 +36,6 @@ pub struct ListNode {
     pub next: Option<Box<ListNode>>,
 }
 
-impl ListNode {
-    #[inline]
-    fn new(val: i32) -> Self {
-        ListNode { next: None, val }
-    }
-}
-
 impl Solution {
     pub fn is_palindrome_simple(head: Option<Box<ListNode>>) -> bool {
         let mut vector = vec![];
