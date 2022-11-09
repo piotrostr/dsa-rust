@@ -29,3 +29,21 @@ func HasCycle(head *ListNode, pos int) bool {
 
 	return true
 }
+
+func main() {
+	println(
+		HasCycle(&ListNode{
+			Val: 3,
+			Next: &ListNode{
+				Val: 2,
+				Next: &ListNode{
+					Val: 0,
+					Next: &ListNode{
+						Val:  -4,
+						Next: nil,
+					},
+				},
+			},
+		}, 1),
+	)
+}
