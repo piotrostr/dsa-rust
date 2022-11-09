@@ -44,6 +44,25 @@ impl ListNode {
 }
 
 impl Solution {
+    pub fn is_palindrome_simple(head: Option<Box<ListNode>>) -> bool {
+        let mut vector = vec![];
+        let mut head = head;
+        loop {
+            match head {
+                Some(node) => {
+                    vector.push(node.val);
+                    head = node.next;
+                }
+                None => break,
+            }
+        }
+
+        let mut _vector = vector.clone();
+        _vector.reverse();
+
+        vector == _vector
+    }
+
     pub fn is_palindrome(head: Option<Box<ListNode>>) -> bool {
         let mut vector = vec![];
         let mut head = head;
