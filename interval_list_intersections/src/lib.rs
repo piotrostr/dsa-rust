@@ -123,4 +123,17 @@ mod tests {
         let want: Vec<Vec<i32>> = Vec::new();
         assert_eq!(result, want);
     }
+
+    #[test]
+    fn it_works_for_various_input_lengths() {
+        let first_list = [[3, 5], [9, 20]].map(|sublist| sublist.to_vec()).to_vec();
+        let second_list = [[4, 5], [7, 10], [11, 12], [14, 15], [16, 20]]
+            .map(|sublist| sublist.to_vec())
+            .to_vec();
+        let result = Solution::interval_intersection(first_list, second_list);
+        let want = [[4, 5], [9, 10], [11, 12], [14, 15], [16, 20]]
+            .map(|sublist| sublist.to_vec())
+            .to_vec();
+        assert_eq!(result, want);
+    }
 }
