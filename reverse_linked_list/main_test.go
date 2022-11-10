@@ -39,7 +39,11 @@ func TestReverseList(t *testing.T) {
 		},
 	}
 
-	if got.Val != want.Val {
-		t.Fatalf("ReverseList failed: %+v != %+v", got, want)
+	for got != nil && want != nil {
+		if got.Val != want.Val {
+			t.Fatalf("ReverseList failed: %+v != %+v", got, want)
+		}
+		got = got.Next
+		want = want.Next
 	}
 }
