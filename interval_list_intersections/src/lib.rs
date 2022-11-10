@@ -48,6 +48,7 @@ impl Solution {
             if second_list_index == second_list.len() || first_list_index == first_list.len() {
                 break;
             }
+
             let (a, b) = (
                 &first_list[first_list_index],
                 &second_list[second_list_index],
@@ -72,18 +73,19 @@ impl Solution {
             // 3) intersection: b encloses a => a[0], a[1]
             if a[0] >= b[0] && a[1] <= b[1] {
                 res.push(vec![a[0], a[1]]);
-                // push to next b
-                second_list_index += 1;
+                // push to next a
+                first_list_index += 1;
                 continue;
             }
 
             // 4) intersection: a encloses b => b[0], b[1]
             if b[0] >= a[0] && b[1] <= a[1] {
                 res.push(vec![b[0], b[1]]);
-                // push to next a
-                first_list_index += 1;
+                // push to next b
+                second_list_index += 1;
                 continue;
             }
+
             // 5), 6) no intersection => do nothing, increment smaller
             if a[0] <= b[0] {
                 first_list_index += 1;
