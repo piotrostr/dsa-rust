@@ -41,20 +41,35 @@ impl Codec {
 
 #[cfg(test)]
 mod tests {
+    use std::any::{Any, TypeId};
+
     use super::*;
 
     #[test]
     fn serialize_works() {
-        let obj = Codec::new();
+        let codec = Codec::new();
         let tree = Option::Some(Rc::new(RefCell::new(TreeNode::new(5))));
-        let data: String = obj.serialize(tree.clone());
-        let ans: Option<Rc<RefCell<TreeNode>>> = obj.deserialize(data);
-        assert_eq!(tree, ans);
+        let serialized = codec.serialize(tree.clone());
+        let want = String::from("5");
+        assert_eq!(serialized, want);
     }
 
     #[test]
-    fn deserialize_works() {}
+    fn deserialize_works() {
+        let codec = Codec::new();
+        let serialized = "5,3".to_string();
+        let deserialized = codec.deserialize(serialized);
+        let want = Option::Some(Rc::new(RefCell::new(TreeNode::new(5))));
+        assert_eq!(deserialized, want);
+    }
 
     #[test]
-    fn everything_works() {}
+    fn everything_works() {
+        let codec = Codec::new();
+        let tree = Option::Some(Rc::new(RefCell::new(TreeNode::new(5))));
+        let serialized = codec.serialize(tree.clone());
+        assert_eq!(TypeId::of::<String>(), serialized.type_id());
+        let deserialized = codec.deserialize(serialized);
+        assert_eq!(tree, deserialized);
+    }
 }
