@@ -19,6 +19,7 @@ impl TreeNode {
         }
     }
 }
+/// Lets start by creating a few example binary trees and set up the tests
 pub struct Codec {}
 
 impl Codec {
@@ -27,11 +28,11 @@ impl Codec {
     }
 
     pub fn serialize(&self, _root: Option<Rc<RefCell<TreeNode>>>) -> String {
-        "".to_string()
+        return "".to_string();
     }
 
     pub fn deserialize(&self, _data: String) -> Option<Rc<RefCell<TreeNode>>> {
-        Option::Some(Rc::new(RefCell::new(TreeNode {
+        Some(Rc::new(RefCell::new(TreeNode {
             val: 5,
             left: None,
             right: None,
@@ -39,34 +40,63 @@ impl Codec {
     }
 }
 
+/// get_tree returns a tree [1, 2, 3, null, null, 4, 5] as on leetcode
+pub fn get_tree() -> Option<Rc<RefCell<TreeNode>>> {
+    return Some(Rc::new(RefCell::new(TreeNode {
+        val: 1,
+        left: Some(Rc::new(RefCell::new(TreeNode {
+            val: 2,
+            left: None,
+            right: None,
+        }))),
+        right: Some(Rc::new(RefCell::new(TreeNode {
+            val: 3,
+            left: Some(Rc::new(RefCell::new(TreeNode {
+                val: 4,
+                left: None,
+                right: None,
+            }))),
+            right: Some(Rc::new(RefCell::new(TreeNode {
+                val: 5,
+                left: None,
+                right: None,
+            }))),
+        }))),
+    })));
+}
+
 #[cfg(test)]
 mod tests {
-    use std::any::{Any, TypeId};
-
     use super::*;
+
+    use std::{
+        any::{Any, TypeId},
+        cell::RefCell,
+        rc::Rc,
+    };
 
     #[test]
     fn serialize_works() {
         let codec = Codec::new();
-        let tree = Option::Some(Rc::new(RefCell::new(TreeNode::new(5))));
+        let tree = get_tree();
         let serialized = codec.serialize(tree.clone());
-        let want = String::from("5");
+        let want = String::from("[1,2,3,null,null,4,5]");
         assert_eq!(serialized, want);
     }
 
     #[test]
     fn deserialize_works() {
         let codec = Codec::new();
-        let serialized = "5,3".to_string();
+        let serialized = String::from("[1,2,3,null,null,4,5]");
         let deserialized = codec.deserialize(serialized);
-        let want = Option::Some(Rc::new(RefCell::new(TreeNode::new(5))));
+        let want = get_tree();
         assert_eq!(deserialized, want);
     }
 
     #[test]
     fn everything_works() {
         let codec = Codec::new();
-        let tree = Option::Some(Rc::new(RefCell::new(TreeNode::new(5))));
+        let tree = Some(Rc::new(RefCell::new(TreeNode::new(5))));
         let serialized = codec.serialize(tree.clone());
         assert_eq!(TypeId::of::<String>(), serialized.type_id());
         let deserialized = codec.deserialize(serialized);
