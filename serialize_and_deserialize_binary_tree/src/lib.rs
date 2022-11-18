@@ -1,4 +1,5 @@
 use std::cell::RefCell;
+use std::collections::VecDeque;
 use std::rc::Rc;
 
 /// Definition for a binary tree node.
@@ -27,8 +28,20 @@ impl Codec {
         Codec {}
     }
 
-    pub fn serialize(&self, _root: Option<Rc<RefCell<TreeNode>>>) -> String {
-        return "".to_string();
+    /// serialize returns the tree as a string in form
+    /// `"1,2,3,null,null,2".to_string()`
+    /// with the last character being the number of nulls in the string
+    pub fn serialize(&self, root: Option<Rc<RefCell<TreeNode>>>) -> String {
+        let (values, nones) = traverse(root);
+        let values_string = values
+            .iter()
+            .map(|opt| match opt {
+                Some(value) => value.to_string() + ",",
+                None => "null".to_string() + ",",
+            })
+            .collect::<String>();
+
+        format!("{}{}", values_string, nones.to_string())
     }
 
     pub fn deserialize(&self, _data: String) -> Option<Rc<RefCell<TreeNode>>> {
@@ -65,6 +78,42 @@ pub fn get_tree() -> Option<Rc<RefCell<TreeNode>>> {
     })));
 }
 
+/// Traverse goes through the tree and returns the values in
+///
+/// It also returns the number of none's that is useful for deserialization
+///
+/// It can be appended as the last value and along with the length of array
+/// allow to start going from the back and knowing how to deserialize the tree
+/// better, not having to pass through the array another time
+pub fn traverse(root: Option<Rc<RefCell<TreeNode>>>) -> (Vec<Option<i32>>, i32) {
+    // keep a deque queue of nodes to go through
+    // pop the nodes from the back, get their values and and append lefts and
+    // rights to the deque,
+    let mut root = root;
+    let mut values: Vec<Option<i32>> = vec![];
+    let mut queue = VecDeque::new();
+    let mut nones = 0;
+    loop {
+        match root {
+            Some(ref node) => {
+                let node = node.borrow();
+                values.push(Some(node.val));
+                queue.push_front(node.left.clone());
+                queue.push_front(node.right.clone())
+            }
+            None => {
+                values.push(None);
+                nones += 1;
+            }
+        }
+        match queue.pop_back() {
+            Some(new_root) => root = new_root,
+            None => break,
+        }
+    }
+    return (values, nones);
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -74,6 +123,13 @@ mod tests {
         cell::RefCell,
         rc::Rc,
     };
+
+    #[test]
+    fn traversing_works() {
+        let tree = get_tree();
+        traverse(tree);
+        assert!(false);
+    }
 
     #[test]
     fn serialize_works() {
