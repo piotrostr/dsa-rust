@@ -47,7 +47,7 @@ impl Codec {
     pub fn deserialize(&self, data: String) -> Option<Rc<RefCell<TreeNode>>> {
         let mut data = data;
         // handle case of empty data string
-        if data == "" || !data.contains(",") {
+        if data == "" || !data.contains(",") || data == "[]" {
             return None;
         }
 
@@ -186,17 +186,19 @@ pub fn right_append(
 /// keep the trees for any given level in a queue to be able go back to attach
 /// more values
 pub fn assemble(values: Vec<Option<i32>>) -> Option<Rc<RefCell<TreeNode>>> {
+    let mut values = VecDeque::from(values.clone());
     // handle case of empty
     if values.is_empty() {
         return None;
     }
-    let mut values = VecDeque::from(values.clone());
-    let mut queue /* : VecDeque<Option<Rc<RefCell<TreeNode>>>>*/ = VecDeque::new();
+    let mut queue: VecDeque<Option<Rc<RefCell<TreeNode>>>> = VecDeque::new();
 
-    // start with root being the last element on the right side
-    let root = Some(Rc::new(RefCell::new(TreeNode::new(
-        values.pop_front().unwrap().unwrap(),
-    ))));
+    // start with root being the last element on the right side, cover the edge case
+    let first_value = values.pop_front().unwrap();
+    if first_value == None {
+        return None;
+    }
+    let root = Some(Rc::new(RefCell::new(TreeNode::new(first_value.unwrap()))));
 
     // start with the first value which is always the root value and the root of the tree
     // then, slap in the values for each of the nodes, after slapping in the
@@ -261,6 +263,15 @@ mod tests {
         let serialized = String::from("1,2,3,null,null,4,5,null,null,null,null,");
         let deserialized = codec.deserialize(serialized);
         let want = get_tree();
+        assert_eq!(deserialized, want);
+    }
+
+    #[test]
+    fn works_for_empty_input() {
+        let codec = Codec::new();
+        let serialized = String::from("");
+        let deserialized = codec.deserialize(serialized);
+        let want = None;
         assert_eq!(deserialized, want);
     }
 
