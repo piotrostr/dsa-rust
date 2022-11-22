@@ -1,3 +1,3 @@
 # dsa-rust
 
-SWE interview study endavour
+SWE interview study endeavour
