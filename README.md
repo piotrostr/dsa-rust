@@ -1,3 +1,3 @@
 # dsa-rust
 
-SWE interview study endeavour
+SWE interview prep but it's Rust
