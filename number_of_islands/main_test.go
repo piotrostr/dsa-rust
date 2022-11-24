@@ -36,3 +36,16 @@ func TestNumIslands_Example3(t *testing.T) {
 		t.Errorf("numIslands() = %v, want %v", got, want)
 	}
 }
+
+// benchmark
+func BenchmarkNumIslands(b *testing.B) {
+	grid := [][]byte{
+		[]byte("11110"),
+		[]byte("11010"),
+		[]byte("11000"),
+		[]byte("00000"),
+	}
+	for i := 0; i < b.N; i++ {
+		numIslands(grid)
+	}
+}
