@@ -1,7 +1,5 @@
 package main
 
-import "fmt"
-
 const One = 0b110001
 
 // how is this graph theory?
@@ -30,7 +28,6 @@ func numIslands(grid [][]byte) int {
 			dfs(grid, row, col, visitedMap)
 		}
 	}
-	fmt.Printf("%+v", visitedMap)
 	return islandsCount
 }
 
@@ -63,7 +60,7 @@ func dfs(grid [][]byte, row int, col int, visitedMap map[int]map[int]bool) {
 		dfs(grid, row-1, col, visitedMap)
 	}
 	// go right
-	if row+1 < len(grid)-1 {
+	if row+1 < len(grid) {
 		dfs(grid, row+1, col, visitedMap)
 	}
 	// go up
@@ -71,7 +68,7 @@ func dfs(grid [][]byte, row int, col int, visitedMap map[int]map[int]bool) {
 		dfs(grid, row, col-1, visitedMap)
 	}
 	// go down
-	if col+1 < len(grid[0])-1 {
+	if col+1 < len(grid[0]) {
 		dfs(grid, row, col+1, visitedMap)
 	}
 }
@@ -86,9 +83,5 @@ func wasVisited(row int, col int, visitedMap map[int]map[int]bool) bool {
 }
 
 func isValid(b byte) bool {
-	if b == One {
-		return true
-	}
-
-	return false
+	return b == One
 }
