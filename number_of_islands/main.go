@@ -56,7 +56,7 @@ func dfs(grid [][]byte, row int, col int, visitedMap map[int]map[int]bool) {
 
 	// spread around peers, check if won't go out of bounds though
 	// go left
-	if row-1 > 0 {
+	if row-1 >= 0 {
 		dfs(grid, row-1, col, visitedMap)
 	}
 	// go right
@@ -64,7 +64,7 @@ func dfs(grid [][]byte, row int, col int, visitedMap map[int]map[int]bool) {
 		dfs(grid, row+1, col, visitedMap)
 	}
 	// go up
-	if col-1 > 0 {
+	if col-1 >= 0 {
 		dfs(grid, row, col-1, visitedMap)
 	}
 	// go down
