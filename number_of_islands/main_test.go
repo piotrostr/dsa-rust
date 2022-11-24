@@ -25,3 +25,14 @@ func TestNumIslands_Example2(t *testing.T) {
 		t.Errorf("numIslands() = %v, want %v", got, want)
 	}
 }
+
+func TestNumIslands_Example3(t *testing.T) {
+	grid := [][]byte{
+		[]byte("111"),
+		[]byte("010"),
+		[]byte("111"),
+	}
+	if got, want := numIslands(grid), 1; got != want {
+		t.Errorf("numIslands() = %v, want %v", got, want)
+	}
+}
