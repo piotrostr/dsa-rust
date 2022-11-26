@@ -53,8 +53,13 @@ impl Solution {
             return;
         }
 
-        nums.pop();
-        nums.insert(0, last_num);
+        if nums[0] < last_num {
+            nums.pop();
+            nums.insert(0, last_num);
+        } else {
+            let first_num = nums.remove(0);
+            nums.push(first_num);
+        }
     }
 }
 
@@ -142,8 +147,15 @@ mod tests {
         assert_eq!(nums, want);
     }
 
-    // #[test]
-    // skip for now
+    #[test]
+    fn example_7() {
+        let mut nums = vec![2, 3, 1];
+        let want = vec![3, 1, 2];
+        Solution::next_permutation(&mut nums);
+        assert_eq!(nums, want);
+    }
+
+    #[test]
     fn is_sorted_works() {
         let cases = &vec![vec![1, 1, 5], vec![3, 2, 1], vec![1, 2, 3]];
         let wants = &vec![true, true, true];
