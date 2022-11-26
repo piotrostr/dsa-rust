@@ -26,16 +26,20 @@ use std::collections::VecDeque;
 ///     continue to find smaller; if smaller swap the array[-1]
 /// if no smaller, pop the array[-1] and insert at the beginning of array
 ///
+/// 4/6 cases, improving:
+/// keep track of the greatest number and the smallest number
+/// if the greatest number at front and smallest is last_num, swap them
 pub struct Solution {}
 
 impl Solution {
     pub fn next_permutation(nums: &mut Vec<i32>) -> Vec<i32> {
-        let last_num = nums[nums.len() - 1].clone();
         let mut nums = VecDeque::from(nums.clone());
+
+        let last_num = nums[nums.len() - 1].clone();
 
         // start with the second last index, go until `index = 0`
         // the range is exclusive, thus `nums.len() + 1`
-        for i in 2..(nums.len() + 1) {
+        for i in 2..(nums.len()/*+ 1*/) {
             let index = nums.len() - i;
             if nums[index] < last_num {
                 let num_at_index = nums[index];
@@ -43,8 +47,18 @@ impl Solution {
                 let length_of_nums = nums.len();
                 nums[length_of_nums - 1] = num_at_index;
                 return Vec::from(nums);
+
+                // however, if this was to happen at the index of 0, just swap
+                // meaning, just drop the 0 index
             }
         }
+
+        if is_sorted_desc(Vec::from(nums.clone())) {
+            let mut vec = Vec::from(nums);
+            vec.reverse();
+            return vec;
+        }
+
         nums.pop_back();
         nums.push_front(last_num);
         return Vec::from(nums);
