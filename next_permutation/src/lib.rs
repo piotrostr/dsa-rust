@@ -18,7 +18,8 @@ impl Solution {
     pub fn next_permutation(nums: &mut Vec<i32>) {
         // iterating through the left is most intuitive with a loop and
         // substracting index
-        let mut i = nums.len() - 2;
+        let n = nums.len();
+        let mut i = n - 2;
 
         // going to the first decreasing number
         while i > 0 && nums[i] >= nums[i + 1] {
@@ -31,7 +32,7 @@ impl Solution {
         // first number from the end greater than four
 
         // look for the first number above the
-        let mut j = nums.len() - 1;
+        let mut j = n - 1;
         while j > i && nums[j] <= nums[i] {
             j -= 1;
         }
@@ -45,16 +46,9 @@ impl Solution {
         // start with the index next to `i`, but only if, then reverse the whole
         // array the inequality check is to check if a `j` index has been found
         if i != j {
-            i += 1;
-        }
-        j = nums.len() - 1;
-        let mut tmp: i32;
-        while i < j {
-            tmp = nums[i];
-            nums[i] = nums[j];
-            nums[j] = tmp;
-            i += 1;
-            j -= 1;
+            nums[i + 1..n].reverse();
+        } else {
+            nums[i..n].reverse();
         }
     }
 }
