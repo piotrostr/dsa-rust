@@ -8,57 +8,53 @@
 /// `[3, 1, 2]`
 /// `[3, 2, 1]`
 ///
-/// lets try also a bigger array, just two or three permutations
-///
-/// Example for array `[5, 3, 5, 1, 1, 5, 9, 1, 5]`
-///
-/// `[5, 3, 5, 1, 1, 5, 1, 9, 5]`
-///
-/// always start with the right end, as this is the smallest influence
-/// 200 > 120 > 111
-///
-/// start from the right end
-/// if array[-2] < array[-1]:
-///     swap the array[-1], array[-2]
-/// while greater:
-///     continue to find smaller; if smaller swap the array[-1]
-/// if no smaller, pop the array[-1] and insert at the beginning of array
-///
-/// 4/6 cases, improving:
-/// keep track of the greatest number and the smallest number
-/// if the greatest number at front and smallest is last_num, swap them
+/// In order to truly see the motivation behind the algorithm I believe it is
+/// important to understand the permutations are like a 'sorted' way of all of
+/// outlining all of the permutations between array being sorted ascending and
+/// descending
 pub struct Solution {}
 
 impl Solution {
     pub fn next_permutation(nums: &mut Vec<i32>) {
-        let last_num = nums[nums.len() - 1].clone();
+        // iterating through the left is most intuitive with a loop and
+        // substracting index
+        let mut i = nums.len() - 2;
 
-        // start with the second last index, go until `index = 0`
-        // the range is exclusive, thus `nums.len() + 1`
-        for i in 2..(nums.len()/*+ 1*/) {
-            let index = nums.len() - i;
-            if nums[index] < last_num {
-                let num_at_index = nums[index];
-                nums[index] = last_num;
-                let length_of_nums = nums.len();
-                nums[length_of_nums - 1] = num_at_index;
-                return;
-                // however, if this was to happen at the index of 0, just swap
-                // meaning, just drop the 0 index
-            }
+        // going to the first decreasing number
+        while i > 0 && nums[i] >= nums[i + 1] {
+            i -= 1;
         }
 
-        if is_sorted_desc(nums.clone()) {
-            nums.reverse();
-            return;
+        // at this point it is known that the array is sorted, all of the other
+        // numbers being greater than the nums[i]
+        // to find the solution the cut-off point has to be found - what is the
+        // first number from the end greater than four
+
+        // look for the first number above the
+        let mut j = nums.len() - 1;
+        while j > i && nums[j] <= nums[i] {
+            j -= 1;
         }
 
-        if nums[0] < last_num {
-            nums.pop();
-            nums.insert(0, last_num);
-        } else {
-            let first_num = nums.remove(0);
-            nums.push(first_num);
+        nums.swap(i, j);
+        // since it is known that from index `i`, the values are sorted after
+        // the swap, reversing the array will finish the *next permutation*
+
+        // reverse
+
+        // start with the index next to `i`, but only if, then reverse the whole
+        // array the inequality check is to check if a `j` index has been found
+        if i != j {
+            i += 1;
+        }
+        j = nums.len() - 1;
+        let mut tmp: i32;
+        while i < j {
+            tmp = nums[i];
+            nums[i] = nums[j];
+            nums[j] = tmp;
+            i += 1;
+            j -= 1;
         }
     }
 }
