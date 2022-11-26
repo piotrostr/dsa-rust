@@ -1,5 +1,3 @@
-use std::collections::VecDeque;
-
 /// The solution requires O(1) memory usage, the replacement has to be in-place
 /// Example of all of the permutationn for array `[1,2,3]`
 ///
@@ -32,9 +30,7 @@ use std::collections::VecDeque;
 pub struct Solution {}
 
 impl Solution {
-    pub fn next_permutation(nums: &mut Vec<i32>) -> Vec<i32> {
-        let mut nums = VecDeque::from(nums.clone());
-
+    pub fn next_permutation(nums: &mut Vec<i32>) {
         let last_num = nums[nums.len() - 1].clone();
 
         // start with the second last index, go until `index = 0`
@@ -46,22 +42,19 @@ impl Solution {
                 nums[index] = last_num;
                 let length_of_nums = nums.len();
                 nums[length_of_nums - 1] = num_at_index;
-                return Vec::from(nums);
-
+                return;
                 // however, if this was to happen at the index of 0, just swap
                 // meaning, just drop the 0 index
             }
         }
 
-        if is_sorted_desc(Vec::from(nums.clone())) {
-            let mut vec = Vec::from(nums);
-            vec.reverse();
-            return vec;
+        if is_sorted_desc(nums.clone()) {
+            nums.reverse();
+            return;
         }
 
-        nums.pop_back();
-        nums.push_front(last_num);
-        return Vec::from(nums);
+        nums.pop();
+        nums.insert(0, last_num);
     }
 }
 
@@ -96,6 +89,7 @@ pub fn is_sorted_desc(nums: Vec<i32>) -> bool {
 
     return true;
 }
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -104,48 +98,48 @@ mod tests {
     fn example_1() {
         let mut nums = vec![1, 2, 3];
         let want = vec![1, 3, 2];
-        let got = Solution::next_permutation(&mut nums);
-        assert_eq!(got, want, "next_permutation({:?})", nums);
+        Solution::next_permutation(&mut nums);
+        assert_eq!(nums, want);
     }
 
     #[test]
     fn example_2() {
         let mut nums = vec![3, 2, 1];
         let want = vec![1, 2, 3];
-        let got = Solution::next_permutation(&mut nums);
-        assert_eq!(got, want, "next_permutation({:?})", nums);
+        Solution::next_permutation(&mut nums);
+        assert_eq!(nums, want);
     }
 
     #[test]
     fn example_3() {
         let mut nums = vec![1, 1, 5];
         let want = vec![1, 5, 1];
-        let got = Solution::next_permutation(&mut nums);
-        assert_eq!(got, want, "next_permutation({:?})", nums);
+        Solution::next_permutation(&mut nums);
+        assert_eq!(nums, want);
     }
 
     #[test]
     fn example_4() {
         let mut nums = vec![1, 3, 2];
         let want = vec![2, 1, 3];
-        let got = Solution::next_permutation(&mut nums);
-        assert_eq!(got, want, "next_permutation({:?})", nums);
+        Solution::next_permutation(&mut nums);
+        assert_eq!(nums, want);
     }
 
     #[test]
     fn example_5() {
         let mut nums = vec![3, 1, 2];
         let want = vec![3, 2, 1];
-        let got = Solution::next_permutation(&mut nums);
-        assert_eq!(got, want);
+        Solution::next_permutation(&mut nums);
+        assert_eq!(nums, want);
     }
 
     #[test]
     fn example_6() {
         let mut nums = vec![2, 1, 3];
         let want = vec![2, 3, 1];
-        let got = Solution::next_permutation(&mut nums);
-        assert_eq!(got, want);
+        Solution::next_permutation(&mut nums);
+        assert_eq!(nums, want);
     }
 
     // #[test]
