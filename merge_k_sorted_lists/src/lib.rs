@@ -1,3 +1,5 @@
+use std::collections::BinaryHeap;
+
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct ListNode {
     pub val: i32,
@@ -15,10 +17,29 @@ pub struct Solution {}
 
 impl Solution {
     pub fn merge_k_lists(lists: Vec<Option<Box<ListNode>>>) -> Option<Box<ListNode>> {
-        None
+        let mut heap = BinaryHeap::<i32>::new();
+        for list in lists {
+            let mut list = list;
+            while list.is_some() {
+                let node = list.unwrap();
+                heap.push(node.val);
+                list = node.next;
+            }
+        }
+
+        let mut vals = heap.into_sorted_vec();
+
+        // assemble the tree from the back
+        vals.reverse();
+        let mut ptr: Option<Box<ListNode>> = None;
+        for val in vals {
+            let new_node = Some(Box::new(ListNode { val, next: ptr }));
+            ptr = new_node;
+        }
+
+        ptr
     }
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;
