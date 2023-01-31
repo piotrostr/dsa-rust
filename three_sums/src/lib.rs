@@ -92,7 +92,7 @@ use std::collections::{HashMap, HashSet};
 
 impl Solution {
     pub fn three_sum(nums: Vec<i32>) -> Vec<Vec<i32>> {
-        if nums.len() == 0 {
+        if nums.is_empty() {
             return vec![];
         }
         // handle the corner case with just zeros and larger numbers
@@ -128,7 +128,7 @@ impl Solution {
             // the `num` and the two more nums have to be zero
             // meaning, that the target is the opposite of the number
             let target = -num;
-            for possible_match in (&two_sum(&map, nums.clone(), target)).iter() {
+            for possible_match in two_sum(&map, nums.clone(), target).iter() {
                 if let [j, k] = possible_match[..] {
                     let _j = j as usize;
                     let _k = k as usize;
@@ -143,36 +143,33 @@ impl Solution {
         }
         let mut resvec = Vec::from_iter(res.into_iter());
         resvec.sort();
-        return resvec;
+        resvec
     }
 }
 
 pub fn two_sum(map: &HashMap<i32, i32>, nums: Vec<i32>, target: i32) -> Vec<Vec<i32>> {
     let mut res: Vec<Vec<i32>> = vec![];
     for (index, num) in nums.iter().enumerate() {
-        match map.get(&(target - *num)) {
-            Some(&complement_index) => {
-                res.push(vec![index as i32, complement_index]);
-            }
-            None => {}
+        if let Some(&complement_index) = map.get(&(target - *num)) {
+            res.push(vec![index as i32, complement_index]);
         };
     }
 
-    return res;
+    res
 }
 
-pub fn check_condition(nums: &Vec<i32>, i: usize, j: usize, k: usize) -> bool {
+pub fn check_condition(nums: &[i32], i: usize, j: usize, k: usize) -> bool {
     if i != j && i != k && j != k && nums[i] + nums[j] + nums[k] == 0 {
         return true;
     }
-    return false;
+    false
 }
 
 pub fn deduplicate<T: std::cmp::Eq + std::hash::Hash>(nums: Vec<T>) -> Vec<T> {
     // convert to hash set
     let unique: HashSet<T> = HashSet::from_iter(nums.into_iter());
     // convert the de-duped back into vector
-    return Vec::from_iter(unique);
+    Vec::from_iter(unique)
 }
 
 #[cfg(test)]
